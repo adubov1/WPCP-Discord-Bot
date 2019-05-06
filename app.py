@@ -1,5 +1,6 @@
 import discord
 import json, random
+import config
 from discord.ext.commands import Bot
 
 cclient = discord.Client()
@@ -35,4 +36,4 @@ async def eightball(ctx, *arg):
     await ctx.send(' '.join(arg) + " " + random.choice(possible_responses))
 
 
-client.run('NTc0OTgwNTIyNTAyMjU4NzAw.XNBSkg.J6z9RMuGsuAtWgnr0npyiisHPRY')
+client.run(config.token)
