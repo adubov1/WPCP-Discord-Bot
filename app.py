@@ -1,10 +1,13 @@
 import discord
-import json, random
+import json
+import random
 import config
-from discord.ext.commands import Bot
+import requests
+from discord.ext import commands
 
 cclient = discord.Client()
-client = Bot(command_prefix=('/'))
+client = commands.Bot(command_prefix=('/'))
+
 
 @client.event
 async def on_ready():
@@ -19,6 +22,7 @@ async def on_message(message):
     if message.content.startswith('$hello'):
         await message.channel.send('Hi!')
 
+    await client.process_commands(message)
 
 @client.command(name='8ball',
                 description="Answers a yes/no question.",
@@ -34,6 +38,20 @@ async def eightball(ctx, *arg):
         'Definitely',
     ]
     await ctx.send(' '.join(arg) + " " + random.choice(possible_responses))
+
+
+@client.command(name='kd',
+                description="Grabs Lifetime KD",
+                brief="KD Grabber",
+                aliases=['killdeath', 'kdr'],
+                pass_context=True)
+async def kdr(ctx, first:str, *, second:str):
+    url = f'https://api.fortnitetracker.com/v1/profile/{first}/{second}/'
+    kd = requests.get(url, headers = {'TRN-Api-Key' : config.trn}).json()
+    if 'error' in kd:
+        await ctx.send("Error")
+    else:
+        await ctx.send("Lifetime K/D: " + kd['lifeTimeStats'][11]['value'])
 
 
 client.run(config.token)
